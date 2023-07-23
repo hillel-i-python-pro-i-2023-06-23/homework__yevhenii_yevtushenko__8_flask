@@ -3,18 +3,19 @@ import pathlib
 
 import requests
 from flask import Flask
+
 from modules.config import FILES_INPUT_DIR
 from modules.services.genetate_user import generate_users
 
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():  # put application's code here
-    return 'Hello World!'
+    return "Hello World!"
 
 
-@app.route('/get-content/')
+@app.route("/get-content/")
 def read_file(file_path: pathlib.Path = None):
     content = ""
     if file_path is None:
@@ -26,7 +27,7 @@ def read_file(file_path: pathlib.Path = None):
     return content
 
 
-@app.route('/generate-users')
+@app.route("/generate-users/")
 def show_users():
     users = generate_users(100)
     users_formatted = []
@@ -37,16 +38,16 @@ def show_users():
     return f"<ol>{_temp}</ol>"
 
 
-@app.route('/space')
+@app.route("/space/")
 def response():
     url = "http://api.open-notify.org/astros.json"
     data = requests.get(url).json()
-    names = [person['name'] for person in data['people']]
+    names = [person["name"] for person in data["people"]]
     output_str = f"Total in cosmos:{len(names)}"
     return output_str
 
 
-@app.route("/mean")
+@app.route("/mean/")
 def read_csv_file(url: str = "https://drive.google.com/uc?export=download&id=13nk_FYpcayUck2Ctrela5Tjt9JQbjznt"):
     with requests.get(url) as data:
         csv_reader = csv.DictReader(data.text.splitlines())
@@ -54,12 +55,14 @@ def read_csv_file(url: str = "https://drive.google.com/uc?export=download&id=13n
         temp_height = []
 
         for row in csv_reader:
-            temp_weight.append(float(row['Weight(Pounds)']) * 0.453592)
-            temp_height.append(float(row['Height(Inches)']) * 2.54)
+            temp_weight.append(float(row["Weight(Pounds)"]) * 0.453592)
+            temp_height.append(float(row["Height(Inches)"]) * 2.54)
 
-        return f"Average Height (cm): {sum(temp_height) / len(temp_height):.2f}" \
-               f"Average Weight (kg): {sum(temp_weight) / len(temp_weight):.2f}"
+        return (
+            f"Average Height (cm): {sum(temp_height) / len(temp_height):.2f}"
+            f"Average Weight (kg): {sum(temp_weight) / len(temp_weight):.2f}"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
